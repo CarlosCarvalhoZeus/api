@@ -1,6 +1,6 @@
 steps:
   - id: 'Build and Push Container Image'
-    name: 'gcr.io/cloud-builders/docker:latest'
+    name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -29,5 +29,4 @@ substitutions:
 options:
   dynamic_substitutions: true
 images:
-  - 'us-central1-docker.pkg.dev/iconic-mariner-417506/api:latest'
-  
+  - '$_DOCKER_IMAGE:latest'
