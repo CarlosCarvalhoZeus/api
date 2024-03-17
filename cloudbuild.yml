@@ -6,9 +6,7 @@ steps:
       - '-c'
       - |
         docker build . \
-        -t $_DOCKER_IMAGE:${SHORT_SHA} \
         -t $_DOCKER_IMAGE:latest 
-        docker push $_DOCKER_IMAGE:${SHORT_SHA}
         docker push $_DOCKER_IMAGE:latest
   - id : 'Deploy to Cloud Run'
     name: 'gcr.io/cloud-builders/gcloud'
@@ -31,6 +29,5 @@ substitutions:
 options:
   dynamic_substitutions: true
 images:
-  - 'us-central1-docker.pkg.dev/iconic-mariner-417506/api:${SHORT_SHA}'
   - 'us-central1-docker.pkg.dev/iconic-mariner-417506/api:latest'
   
