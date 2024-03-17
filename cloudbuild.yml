@@ -6,7 +6,9 @@ steps:
       - '-c'
       - |
         docker build . \
+        -t $_DOCKER_IMAGE:${SHORT_SHA} \
         -t $_DOCKER_IMAGE:latest 
+        docker push $_DOCKER_IMAGE:${SHORT_SHA}
         docker push $_DOCKER_IMAGE:latest
   - id : 'Deploy to Cloud Run'
     name: 'gcr.io/cloud-builders/gcloud'
@@ -14,7 +16,7 @@ steps:
     args:
       - '-c'
       - | 
-          gcloud run deploy alert-edgeservice \
+          gcloud run deploy api \
           --platform=managed \
           --port=7000 \
           --image=$_DOCKER_IMAGE:latest \
@@ -29,4 +31,5 @@ substitutions:
 options:
   dynamic_substitutions: true
 images:
+  - '$_DOCKER_IMAGE:${SHORT_SHA}'
   - '$_DOCKER_IMAGE:latest'
