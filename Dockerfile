@@ -1,13 +1,16 @@
-FROM golang:1.21-alpine AS build-env
+FROM golang:1.21-alpine 
 
-SHELL ["/bin/sh", "-c"]
+# Defina o diretório de trabalho dentro do contêiner
+WORKDIR /go/src/app
 
-RUN mkdir /app
-ADD . /app
-WORKDIR /app
-RUN go get -d ./... ;\
-    CGO_ENABLED=0 GOOS=linux go build -o main . ;
-    
-RUN go build -o main .
+# Copie o código fonte da aplicação para o contêiner
+COPY . .
 
-CMD ["./main"]
+# Baixe e instale as dependências da aplicação
+RUN go mod download
+
+# Compile a aplicação
+RUN go build -o api .
+
+# Especifique como a aplicação deve ser executada
+CMD ["./main.go"]
