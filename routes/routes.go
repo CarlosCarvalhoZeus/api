@@ -20,12 +20,8 @@ func initializeRoutes(router *gin.Engine) {
 	})
 	router.GET("/pessoas", handlers.GetPessoas)
 	router.GET("/produtos", handlers.GetProdutos)
-	router.POST("/os", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"success": "under development...",
-		})
-	})
-	router.GET("produtos/:id")
+	router.GET("/produtos/:id", handlers.GetInsightProduto)
+	router.GET("/pessoas/:id", handlers.GetInsightPessoa)
 
 	// router.GET("/:name")
 	router.Run()

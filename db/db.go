@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	go_ora "github.com/sijms/go-ora/v2"
 )
@@ -15,14 +16,28 @@ type Produto struct {
 	Produto  string `json:"produto"`
 	Material string `json:"material"`
 }
+type ProdutoFeedback struct {
+	Prod        string
+	Bom         int64
+	Ruim        int64
+	Indiferente int64
+}
 type Pessoas struct {
 	Id            int64  `json:"id"`
 	Name          string `json:"name"`
 	AnoNascimento string `json:"anoNascimento"`
 	Nivel         string `json:"nivel"`
 }
+type Feedback struct {
+	NomeFunc    string
+	Produto     string
+	Bom         int64
+	Indiferente int64
+	Ruim        int64
+}
 
 func Conn() (*sql.DB, error) {
+	// fmt.Println()
 	serverInfo := DbInfo{
 		Username: "ADMIN",
 		Password: ".Hundecko20.",
@@ -86,6 +101,60 @@ func GetProdutos(db *sql.DB) ([]Produto, error) {
 		var produto Produto
 		if err := rows.Scan(
 			&produto.Produto,
+		); err != nil {
+			return nil, err
+		}
+		res = append(res, produto)
+	}
+	return res, nil
+}
+
+func GetPessoasInsigh(db *sql.DB, id string) ([]Feedback, error) {
+	query := fmt.Sprintf("select * from FEEDBACK where NOME_FUNCIONARIO = %v", id)
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+	var res []Feedback
+	for rows.Next() {
+		var pessoa Feedback
+		if err := rows.Scan(
+			&pessoa.NomeFunc,
+			&pessoa.Produto,
+			&pessoa.Bom,
+			&pessoa.Ruim,
+			&pessoa.Indiferente,
+		); err != nil {
+			return nil, err
+		}
+		res = append(res, pessoa)
+	}
+	return res, nil
+}
+
+func GetProdutosInsight(db *sql.DB, id string) ([]Feedback, error) {
+	query := fmt.Sprintf("select * from FEEDBACK where PRODUTO = '%v' order by BOM desc", id)
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+	var res []Feedback
+	for rows.Next() {
+		var produto Feedback
+		if err := rows.Scan(
+			&produto.NomeFunc,
+			&produto.Produto,
+			&produto.Bom,
+			&produto.Ruim,
+			&produto.Indiferente,
 		); err != nil {
 			return nil, err
 		}
