@@ -1,0 +1,36 @@
+steps:
+  - id: 'Build and Push Container Image'
+    name: 'gcr.io/cloud-builders/docker:latest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker build . \
+        -t $_DOCKER_IMAGE:${SHORT_SHA} \
+        -t $_DOCKER_IMAGE:latest 
+        docker push $_DOCKER_IMAGE:${SHORT_SHA}
+        docker push $_DOCKER_IMAGE:latest
+  - id : 'Deploy to Cloud Run'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - | 
+          gcloud run deploy alert-edgeservice \
+          --platform=managed \
+          --port=7000 \
+          --image=$_DOCKER_IMAGE:latest \
+          --allow-unauthenticated \
+          --region=us-central1 \
+          --concurrency=40 \
+          --min-instances=1 \
+          --timeout=300s
+substitutions:
+  _REPOSITORY: api
+  _DOCKER_IMAGE: us-central1-docker.pkg.dev/iconic-mariner-417506/api
+options:
+  dynamic_substitutions: true
+images:
+  - 'us-central1-docker.pkg.dev/iconic-mariner-417506/api:${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/iconic-mariner-417506/api:latest'
+  
