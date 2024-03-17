@@ -13,4 +13,4 @@ RUN go mod download
 RUN go build -o api .
 
 # Especifique como a aplicação deve ser executada
-CMD ["./main.go"]
+CMD ["./api"]

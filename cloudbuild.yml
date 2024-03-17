@@ -17,19 +17,17 @@ steps:
       - '-c'
       - | 
           gcloud run deploy api \
+          --image=us-central1-docker.pkg.dev/iconic-mariner-417506/api:latest \
           --platform=managed \
-          --port=7000 \
-          --image=$_DOCKER_IMAGE:latest \
-          --allow-unauthenticated \
           --region=us-central1 \
+          --allow-unauthenticated \
           --concurrency=40 \
           --min-instances=1 \
           --timeout=300s
+
 substitutions:
   _REPOSITORY: api
   _DOCKER_IMAGE: us-central1-docker.pkg.dev/iconic-mariner-417506/api
-options:
-  dynamic_substitutions: true
 images:
   - '$_DOCKER_IMAGE:${SHORT_SHA}'
   - '$_DOCKER_IMAGE:latest'
