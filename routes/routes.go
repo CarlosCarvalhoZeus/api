@@ -25,6 +25,9 @@ func initializeRoutes(router *gin.Engine) {
 			"success": "under development...",
 		})
 	})
+	router.GET("produtos/:id")
+
+	// router.GET("/:name")
 	router.Run()
 
 }

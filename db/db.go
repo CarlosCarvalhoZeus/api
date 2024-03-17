@@ -12,14 +12,14 @@ type DbInfo struct {
 }
 
 type Produto struct {
-	Produto  string
-	Material string
+	Produto  string `json:"produto"`
+	Material string `json:"material"`
 }
 type Pessoas struct {
-	Id            int64
-	Name          string
-	AnoNascimento string //to timestamp
-	Nivel         string
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	AnoNascimento string `json:"anoNascimento"`
+	Nivel         string `json:"nivel"`
 }
 
 func Conn() (*sql.DB, error) {
@@ -49,7 +49,7 @@ func Conn() (*sql.DB, error) {
 }
 
 func GetPessoas(db *sql.DB) ([]Pessoas, error) {
-	query := "select * from pessoas"
+	query := "select unique(NOME_FUNCIONARIO) from FEEDBACK"
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		return nil, err
@@ -62,10 +62,7 @@ func GetPessoas(db *sql.DB) ([]Pessoas, error) {
 	for rows.Next() {
 		var pessoa Pessoas
 		if err := rows.Scan(
-			&pessoa.Id,
 			&pessoa.Name,
-			&pessoa.AnoNascimento,
-			&pessoa.Nivel,
 		); err != nil {
 			return nil, err
 		}
@@ -75,7 +72,7 @@ func GetPessoas(db *sql.DB) ([]Pessoas, error) {
 }
 
 func GetProdutos(db *sql.DB) ([]Produto, error) {
-	query := "select * from produto"
+	query := "select unique(PRODUTO) from FEEDBACK"
 	stmt, err := db.Prepare(query)
 	if err != nil {
 		return nil, err
@@ -89,7 +86,6 @@ func GetProdutos(db *sql.DB) ([]Produto, error) {
 		var produto Produto
 		if err := rows.Scan(
 			&produto.Produto,
-			&produto.Material,
 		); err != nil {
 			return nil, err
 		}
